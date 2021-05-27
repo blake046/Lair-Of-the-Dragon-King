@@ -4,7 +4,9 @@ import com.nicholasblake.game.gamestate.GameState;
 import com.nicholasblake.game.main.GamePanel;
 import com.nicholasblake.game.objects.Block;
 import com.nicholasblake.game.objects.MovingBlock;
+import com.nicholasblake.game.physics.Attackbox;
 import com.nicholasblake.game.physics.Collision;
+import com.nicholasblake.game.resources.Images;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
@@ -15,9 +17,11 @@ import java.util.ArrayList;
 
 
 public class Player  {
+private int health = 160;
+
     private static final long serialVersionUID=1L;
     //movement booleans
-    private boolean right = false, left = false,jumping=false,ducking=false,falling=false;
+    private boolean right = false, left = false,jumping=false,ducking=false,falling=false,attack=false;
     private boolean topCollision = false;
     //boundary
     private double x,y;
@@ -40,6 +44,7 @@ this.height = height;
         int iX = (int)x;
         int iY= (int)y;
         for(int i=0; i<b.length; i++){
+
             for (int j=0;j<b[0].length; j++){
 if(b[i][j].getId()!=0){
             //right collision
@@ -68,6 +73,14 @@ if(b[i][j].getId()!=0){
                 if(!topCollision&& !jumping){
                 falling=true;
             }
+                //damage
+                if( Attackbox.getBossAttack()==true){
+                    GameState.xOffset-=1;
+                    health -=Attackbox.getBossDMG();
+                }
+                if(health<0){
+                    System.out.println("you died");
+                }
         }
             }}}
 for(int i = 0;i<movingBlocks.size(); i++){
@@ -102,6 +115,7 @@ for(int i = 0;i<movingBlocks.size(); i++){
                     falling=true;
                 }
             }
+
         }
     }
 }
@@ -125,6 +139,12 @@ if(currentJumpSpeed<=0){
 if(ducking){
 
 }
+if(attack){
+    Attackbox.playerAttack(12,true);
+}
+if(!attack){
+    Attackbox.playerAttack(0,false);
+}
 if(falling){
 GameState.yOffset+=currentFallSpeed;
 if(currentFallSpeed<maxFallSpeed){
@@ -136,17 +156,32 @@ if(!falling){
 }
     }
     public void draw(Graphics g){
-g.setColor(Color.BLACK);
-g.fillRect((int)x,(int)y,width,height);
+
+if(!right&&!left&&!attack){
+        g.drawImage(Images.playerIdle[0],(int)x-5,(int)y-15,width+20,height+20,null);}
+if(right&&!attack||left&&!attack){
+    g.drawImage(Images.playerMovement[0],(int)x-5,(int)y-15,width+20,height+20,null);
+    //g.setColor(Color.BLACK);
+    //g.fillRect((int)x,(int)y,width,height);
+}
+if(attack){
+    g.drawImage(Images.playerAttack[0],(int)x+1,(int)y-5,width+20,height+30,null);
+
+}
+
     }
 public void keyPressed(int k){
 if(k==KeyEvent.VK_D)right=true;
     if(k== KeyEvent.VK_A)left=true;
-    if(k==KeyEvent.VK_SPACE&&!jumping&&!falling)jumping=true;
+    if(k==KeyEvent.VK_W&&!jumping&&!falling)jumping=true;
     if(k== KeyEvent.VK_S)ducking=true;
+    if(k== KeyEvent.VK_SPACE)attack=true;
 }
 public void keyReleased(int k){
-    if(k== KeyEvent.VK_D)right=false;
+    if(k==KeyEvent.VK_D)right=false;
     if(k== KeyEvent.VK_A)left=false;
+    if(k==KeyEvent.VK_W&&!jumping&&!falling)jumping=false;
+    if(k== KeyEvent.VK_S)ducking=false;
+    if(k== KeyEvent.VK_SPACE)attack=false;
 }
 }

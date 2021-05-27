@@ -13,4 +13,5 @@ public class Collision {
     public  static boolean playerMovingBlock(Point p, MovingBlock b){
         return  b.contains(p);
     }
+
 }

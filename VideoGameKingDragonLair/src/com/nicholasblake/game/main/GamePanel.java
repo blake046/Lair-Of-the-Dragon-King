@@ -3,6 +3,7 @@ package com.nicholasblake.game.main;
 import com.nicholasblake.game.gamestate.GameStateManager;
 import com.nicholasblake.game.resources.Images;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,6 +23,8 @@ public class GamePanel extends JPanel implements Runnable,KeyListener {
         setPreferredSize(new Dimension(WIDTH,HEIGHT));
         addKeyListener(this);
         setFocusable(true);
+
+
         new Images();
         start();
     }
@@ -57,7 +60,7 @@ gsm.tick();
 }
 public void paintComponent(Graphics g){
         super.paintComponent(g);
-        g.clearRect(0,0,WIDTH,HEIGHT);
+
 gsm.draw(g);
 }
 
